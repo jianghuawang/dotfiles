@@ -1,5 +1,8 @@
 # dotfiles
 
-currently only include config files for 
+currently include config files for 
 1. Neovim
 2. tmux
+3. alacritty
+4. zsh
+
