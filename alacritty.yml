@@ -471,7 +471,7 @@ colors:
 #   - (Linux/BSD) user login shell
 #   - (Windows) powershell
 shell:
-  program: "C:\\Windows\\System32\\wsl.exe"
+  program: /usr/bin/zsh
 #  args:
 #    - --login
 
