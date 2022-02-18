@@ -129,5 +129,5 @@ fix_wsl2_interop() {
 		fi
 	done
 }
-#
-# ~/.emacs.d/bin/doom env > /dev/null 2>&1
+
+~/.emacs.d/bin/doom env > /dev/null 2>&1
