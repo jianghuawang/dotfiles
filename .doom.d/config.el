@@ -33,7 +33,7 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type t)
+(setq display-line-numbers-type 'relative)
 
 
 ;; Here are some additional functions/macros that could help you configure Doom:
@@ -57,8 +57,6 @@
 ;; add lib-vterm module manually
 (add-to-list 'load-path "~/local/src/emacs-libvterm")
 (require 'vterm)
-;; set relative line number
-(setq display-line-numbers-type 'relative)
 
 ;; transparancy adjustment
 (set-frame-parameter (selected-frame) 'fullscreen 'maximized)

@@ -77,7 +77,6 @@ plugins=(
   zsh-vi-mode
   web-search
   copydir
-  sudo
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -122,12 +121,25 @@ export LIBGL_ALWAYS_INDIRECT=1
 export GDK_SCALE=2
 
 # fix interop
-fix_wsl2_interop() {
-	for i in $(pstree -np -s $$ | grep -o -E '[0-9]+'); do
-		if [[ -e "/run/WSL/${i}_interop" ]]; then
-			export WSL_INTEROP=/run/WSL/${i}_interop
-		fi
-	done
-}
+# fix_wsl2_interop() {
+# 	for i in $(pstree -np -s $$ | grep -o -E '[0-9]+'); do
+# 		if [[ -e "/run/WSL/${i}_interop" ]]; then
+# 			export WSL_INTEROP=/run/WSL/${i}_interop
+# 		fi
+# 	done
+# }
+#
+# ~/.emacs.d/bin/doom env > /dev/null 2>&1
 
-~/.emacs.d/bin/doom env > /dev/null 2>&1
+# for emacs vterm
+vterm_printf(){
+    if [ -n "$TMUX" ] && ([ "${TERM%%-*}" = "tmux" ] || [ "${TERM%%-*}" = "screen" ] ); then
+        # Tell tmux to pass the escape sequences through
+        printf "\ePtmux;\e\e]%s\007\e\\" "$1"
+    elif [ "${TERM%%-*}" = "screen" ]; then
+        # GNU screen (screen, screen-256color, screen-256color-bce)
+        printf "\eP\e]%s\007\e\\" "$1"
+    else
+        printf "\e]%s\e\\" "$1"
+    fi
+}
