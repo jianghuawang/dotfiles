@@ -21,6 +21,7 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
+(setq doom-font (font-spec :family "FiraMono Nerd Font Mono" :size 16))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -54,102 +55,13 @@
 ;; they are implemented.
 ;;
 
-;; add lib-vterm module manually
-(add-to-list 'load-path "~/local/src/emacs-libvterm")
-(require 'vterm)
-
 ;; transparancy adjustment
-(set-frame-parameter (selected-frame) 'fullscreen 'maximized)
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-(setq org-latex-pdf-process
-      '("latexmk -pdflatex='pdflatex -interaction nonstopmode' -pdf -bibtex -f %f"))
+(after! org
+  (add-to-list 'org-export-backends 'latex))
 
-
-
-(unless (boundp 'org-latex-classes)
-  (setq org-latex-classes nil))
-
-(add-to-list 'org-latex-classes
-             '("ethz"
-               "\\documentclass[a4paper,11pt,titlepage]{memoir}
-\\usepackage[utf8]{inputenc}
-\\usepackage[T1]{fontenc}
-\\usepackage{fixltx2e}
-\\usepackage{graphicx}
-\\usepackage{longtable}
-\\usepackage{float}
-
-\\usepackage{wrapfig}
-\\usepackage{rotating}
-\\usepackage[normalem]{ulem}
-\\usepackage{amsmath}
-\\usepackage{textcomp}
-\\usepackage{marvosym}
-\\usepackage{wasysym}
-\\usepackage{amssymb}
-\\usepackage{hyperref}
-\\usepackage{mathpazo}
-\\usepackage{color}
-\\usepackage{enumerate}
-\\definecolor{bg}{rgb}{0.95,0.95,0.95}
-\\tolerance=1000
-      [NO-DEFAULT-PACKAGES]
-      [PACKAGES]
-
-      [EXTRA]
-\\linespread{1.1}
-\\hypersetup{pdfborder=0 0 0}"
-               ("\\chapter{%s}" . "\\chapter*{%s}")
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
-
-(add-to-list 'org-latex-classes
-             '("article"
-               "\\documentclass[11pt,a4paper]{article}
-\\usepackage[utf8]{inputenc}
-\\usepackage[T1]{fontenc}
-\\usepackage{fixltx2e}
-\\usepackage{graphicx}
-\\usepackage{longtable}
-\\usepackage{wrapfig}
-\\usepackage{rotating}
-\\usepackage[normalem]{ulem}
-\\usepackage{amsmath}
-\\usepackage{textcomp}
-\\usepackage{marvosym}
-\\usepackage{wasysym}
-\\usepackage{amssymb}
-\\usepackage{hyperref}
-\\usepackage{mathpazo}
-\\usepackage{color}
-\\usepackage{enumerate}
-\\definecolor{bg}{rgb}{0.95,0.95,0.95}
-\\tolerance=1000
-      [NO-DEFAULT-PACKAGES]
-      [PACKAGES]
-      [EXTRA]
-\\linespread{1.1}
-\\hypersetup{pdfborder=0 0 0}"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")))
-
-
-(add-to-list 'org-latex-classes '("ebook"
-                                  "\\documentclass[11pt, oneside]{memoir}
-\\setstocksize{9in}{6in}
-\\settrimmedsize{\\stockheight}{\\stockwidth}{*}
-\\setlrmarginsandblock{2cm}{2cm}{*} % Left and right margin
-\\setulmarginsandblock{2cm}{2cm}{*} % Upper and lower margin
-\\checkandfixthelayout
-% Much more laTeX code omitted
-"
-                                  ("\\chapter{%s}" . "\\chapter*{%s}")
-                                  ("\\section{%s}" . "\\section*{%s}")
-                                  ("\\subsection{%s}" . "\\subsection*{%s}")))
+(use-package! tree-sitter
+  :config
+  (require 'tree-sitter-langs)
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
