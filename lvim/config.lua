@@ -11,9 +11,14 @@ an executable
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save = false
-lvim.colorscheme = "onedarkpro"
--- to disable icons and use a minimalist setup, uncomment the following
--- lvim.use_icons = false
+lvim.colorscheme = "tokyonight"
+lvim.builtin.dap.active = true
+lvim.lsp.diagnostics.virtual_text = true
+lvim.builtin.terminal.active = true
+lvim.builtin.breadcrumbs.active = true
+
+vim.opt.relativenumber = true
+vim.o.guifont = "FiraMono Nerd Font Mono:h16"
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
@@ -50,15 +55,35 @@ lvim.builtin.telescope.defaults.mappings = {
 
 -- Use which-key to add extra bindings with the leader-key prefix
 -- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
--- lvim.builtin.which_key.mappings["t"] = {
---   name = "+Trouble",
---   r = { "<cmd>Trouble lsp_references<cr>", "References" },
---   f = { "<cmd>Trouble lsp_definitions<cr>", "Definitions" },
---   d = { "<cmd>Trouble document_diagnostics<cr>", "Diagnostics" },
---   q = { "<cmd>Trouble quickfix<cr>", "QuickFix" },
---   l = { "<cmd>Trouble loclist<cr>", "LocationList" },
---   w = { "<cmd>Trouble workspace_diagnostics<cr>", "Workspace Diagnostics" },
--- }
+lvim.builtin.which_key.mappings["t"] = {
+  name = "+Terminal",
+  b = { "<cmd>SymbolsOutline<cr>", "Symbols" },
+}
+
+lvim.builtin.which_key.mappings["F"] = { "<cmd>Telescope live_grep<cr>", "Live Grep" }
+
+lvim.builtin.which_key.mappings["d"] = {
+  name = "Debug",
+  b = { "<cmd>lua require'dap'.toggle_breakpoint()<cr>", "Breakpoint" },
+  c = { "<cmd>lua require'dap'.continue()<cr>", "Continue" },
+  i = { "<cmd>lua require'dap'.step_into()<cr>", "Into" },
+  o = { "<cmd>lua require'dap'.step_over()<cr>", "Over" },
+  O = { "<cmd>lua require'dap'.step_out()<cr>", "Out" },
+  r = { "<cmd>lua require'dap'.repl.toggle()<cr>", "Repl" },
+  l = { "<cmd>lua require'dap'.run_last()<cr>", "Last" },
+  u = { "<cmd>lua require'dapui'.toggle()<cr>", "UI" },
+  x = { "<cmd>lua require'dap'.terminate()<cr>", "Exit" },
+}
+
+lvim.builtin.which_key.mappings["j"] = {
+  name = "Jump",
+  w = {"<cmd> lua require'hop'.hint_words({ current_line_only = true })<cr>", "find-word-inline"},
+  j = {"<cmd> lua require'hop'.hint_lines_skip_whitespace({direction = require'hop.hint'.HintDirection.AFTER_CURSOR})<cr>", "line-below-start"},
+  k = {"<cmd> lua require'hop'.hint_lines_skip_whitespace({direction = require'hop.hint'.HintDirection.BEFORE_CURSOR})<cr>", "line-above-start"},
+  s = {"<cmd> lua require'hop'.hint_patterns()<cr>", "pattern-search"},
+  u = {"<cmd> lua require'hop'.hint_char1()<cr>", "unigram-search"},
+  b = {"<cmd> lua require'hop'.hint_char2()<cr>", "bigram-search" }
+}
 
 -- TODO: User Config for predefined plugins
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
@@ -83,6 +108,7 @@ lvim.builtin.treesitter.ensure_installed = {
   "rust",
   "java",
   "yaml",
+  "cpp"
 }
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
@@ -114,6 +140,7 @@ lvim.builtin.treesitter.rainbow.enable = true
 -- local opts = {} -- check the lspconfig documentation for a list of all possible options
 -- require("lvim.lsp.manager").setup("pyright", opts)
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyzer" })
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "jdtls" })
 
 
 -- ---remove a server from the skipped list, e.g. eslint, or emmet_ls. !!Requires `:LvimCacheReset` to take effect!!
@@ -147,6 +174,11 @@ vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyz
 --     filetypes = { "typescript", "typescriptreact" },
 --   },
 -- }
+local formatters = require "lvim.lsp.null-ls.formatters"
+formatters.setup {
+  { command = "google_java_format", filetypes = { "java" } },
+}
+
 
 -- -- set additional linters
 -- local linters = require "lvim.lsp.null-ls.linters"
@@ -173,82 +205,21 @@ lvim.plugins = {
   },
   {
     "phaazon/hop.nvim",
-    event = "BufRead",
-    config = function()
-        require("hop").setup()
-        local opts = { noremap = true, silent = true }
-        local keymap = vim.api.nvim_set_keymap
-        keymap("o", "f", ":lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<CR>", opts)
-        keymap("o", "F", ":lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<CR>", opts)
-        keymap("o", "t", ":lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true, hint_offset = -1 })<CR>", opts)
-        keymap("o", "T", ":lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })<CR>", opts)
-
-        keymap("n", "f", ":lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true })<CR>", opts)
-        keymap("n", "F", ":lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true })<CR>", opts)
-        keymap("n", "t", ":lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.AFTER_CURSOR, current_line_only = true, hint_offset = -1 })<CR>", opts)
-        keymap("n", "T", ":lua require'hop'.hint_char1({ direction = require'hop.hint'.HintDirection.BEFORE_CURSOR, current_line_only = true, hint_offset = 1 })<CR>", opts)
-    end,
   },
   {
     "kylechui/nvim-surround",
     config = function()
-        require("nvim-surround").setup()
+      require("nvim-surround").setup()
     end
   },
   {
     "olimorris/onedarkpro.nvim",
-    config = function()
-      vim.o.background = "dark"
-      require("onedarkpro").setup({
-        dark_theme = "onedark", -- The default dark theme
-        light_theme = "onelight", -- The default light theme
-        colors = {}, -- Override default colors by specifying colors for 'onelight' or 'onedark' themes
-        highlights = {}, -- Override default highlight groups
-        ft_highlights = {}, -- Override default highlight groups for specific filetypes
-        plugins = { -- Override which plugin highlight groups are loaded
-          -- See the Supported Plugins section for a list of available plugins
-          all = true
-        },
-        styles = { -- Choose from "bold,italic,underline"
-            strings = "NONE", -- Style that is applied to strings.
-            comments = "italic", -- Style that is applied to comments
-            keywords = "NONE", -- Style that is applied to keywords
-            functions = "NONE", -- Style that is applied to functions
-            variables = "NONE", -- Style that is applied to variables
-            virtual_text = "NONE", -- Style that is applied to virtual text
-        },
-        options = {
-            bold = false, -- Use the colorscheme's opinionated bold styles?
-            italic = false, -- Use the colorscheme's opinionated italic styles?
-            underline = false, -- Use the colorscheme's opinionated underline styles?
-            undercurl = false, -- Use the colorscheme's opinionated undercurl styles?
-            cursorline = false, -- Use cursorline highlighting?
-            transparency = false, -- Use a transparent background?
-            terminal_colors = false, -- Use the colorscheme's colors for Neovim's :terminal?
-            window_unfocused_color = false, -- When the window is out of focus, change the normal background?
-        }
-      })
-    end
   },
   {
     "p00f/nvim-ts-rainbow",
   },
   {
     "simrat39/rust-tools.nvim",
-    -- ft = { "rust", "rs" }, -- IMPORTANT: re-enabling this seems to break inlay-hints
-    config = function()
-      local rt = require("rust-tools")
-      rt.setup({
-      server = {
-          on_attach = function(_, bufnr)
-            -- Hover actions
-            vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
-            -- Code action groups
-            vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
-          end,
-        },
-      })
-    end,
   },
   {
     "aserowy/tmux.nvim",
@@ -258,22 +229,100 @@ lvim.plugins = {
         -- overwrite default configuration
         -- here, e.g. to enable default bindings
         copy_sync = {
-            -- enables copy sync and overwrites all register actions to
-            -- sync registers *, +, unnamed, and 0 till 9 from tmux in advance
-            enable = true,
+          -- enables copy sync and overwrites all register actions to
+          -- sync registers *, +, unnamed, and 0 till 9 from tmux in advance
+          enable = true,
         },
         navigation = {
-            -- enables default keybindings (C-hjkl) for normal mode
-            enable_default_keybindings = true,
+          -- enables default keybindings (C-hjkl) for normal mode
+          enable_default_keybindings = true,
         },
         resize = {
-            -- disable default keybindings (A-hjkl) for normal mode
-            enable_default_keybindings = false,
+          -- disable default keybindings (A-hjkl) for normal mode
+          enable_default_keybindings = false,
         }
       })
     end
-  }
+  },
+  {
+    "mfussenegger/nvim-jdtls",
+  },
+  {
+    'norcalli/nvim-colorizer.lua',
+    config = function()
+      require("colorizer").setup()
+    end
+  },
+  {
+    'rcarriga/nvim-dap-ui'
+  },
+  {
+    'saecki/crates.nvim',
+    config = function()
+      require("crates").setup()
+    end
+  },
+  {
+    'simrat39/symbols-outline.nvim',
+    config = function()
+      require("symbols-outline").setup()
+    end
+  },
+  {
+    "chentoast/marks.nvim",
+    config = function()
+      require("marks").setup()
+    end
+  },
+  {
+    "is0n/jaq-nvim",
+  },
+  {
+    "tzachar/cmp-tabnine",
+    run='./install.sh',
+
+    config = function()
+      require('cmp_tabnine.config').setup({
+        max_lines = 1000,
+        max_num_results = 20,
+        sort = true,
+        run_on_every_keystroke = true,
+        snippet_placeholder = '..',
+        ignored_file_types = {},
+        show_prediction_strength = false
+      })
+    end
+  },
+  {
+    "xiyaowong/nvim-transparent",
+
+    config = function()
+      require("transparent").setup({
+        enable = true, -- boolean: enable transparent
+        extra_groups = { -- table/string: additional groups that should be cleared
+          -- In particular, when you set it to 'all', that means all available groups
+          "all"
+
+          -- example of akinsho/nvim-bufferline.lua
+          -- "BufferLineTabClose",
+          -- "BufferlineBufferSelected",
+          -- "BufferLineFill",
+          -- "BufferLineBackground",
+          -- "BufferLineSeparator",
+          -- "BufferLineIndicatorSelected",
+        },
+        exclude = {}, -- table: groups you don't want to clear
+      })
+    end
+
+  },
 }
+
+require("user.rust-tools")
+require("user.colorscheme")
+require("user.dap-ui")
+require("user.hop")
+require("user.jaq")
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 -- vim.api.nvim_create_autocmd("BufEnter", {

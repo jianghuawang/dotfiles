@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "This is onyl an example, the full document has mora than 700 lines",
+  "properties": {
+    "java.autobuild.enabled": {
+      "default": true,
+      "description": "Go to the original document, this is just an example",
+      "scope": "window",
+      "type": "boolean"
+    },
+    "java.codeGeneration.generateComments": {
+      "default": false,
+      "description": "Go to the original document, this is just an example",
+      "scope": "window",
+      "type": "boolean"
+    },
+  }
+}
+
