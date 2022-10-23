@@ -18,7 +18,7 @@ jaq_nvim.setup {
       python = "python %",
       -- rust = "rustc % && ./$fileBase && rm $fileBase",
       rust = "cargo run",
-      cpp = "g++ % -o $fileBase && ./$fileBase",
+      cpp = "g++ -std=c++17 % -o $fileBase && ./$fileBase",
       go = "go run %",
       sh = "sh %",
     },

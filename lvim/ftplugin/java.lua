@@ -240,8 +240,8 @@ local vopts = {
 }
 
 local mappings = {
-  L = {
-    name = "Java",
+  S = {
+    name = "Lang Specific",
     o = { "<Cmd>lua require'jdtls'.organize_imports()<CR>", "Organize Imports" },
     v = { "<Cmd>lua require('jdtls').extract_variable()<CR>", "Extract Variable" },
     c = { "<Cmd>lua require('jdtls').extract_constant()<CR>", "Extract Constant" },
@@ -252,8 +252,8 @@ local mappings = {
 }
 
 local vmappings = {
-  L = {
-    name = "Java",
+  S = {
+    name = "Lang Specific",
     v = { "<Esc><Cmd>lua require('jdtls').extract_variable(true)<CR>", "Extract Variable" },
     c = { "<Esc><Cmd>lua require('jdtls').extract_constant(true)<CR>", "Extract Constant" },
     m = { "<Esc><Cmd>lua require('jdtls').extract_method(true)<CR>", "Extract Method" },

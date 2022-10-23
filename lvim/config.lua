@@ -10,6 +10,7 @@ an executable
 
 -- general
 lvim.log.level = "warn"
+lvim.builtin.notify.active = false
 lvim.format_on_save = false
 lvim.colorscheme = "tokyonight"
 lvim.builtin.dap.active = true
@@ -17,7 +18,10 @@ lvim.lsp.diagnostics.virtual_text = true
 lvim.builtin.terminal.active = true
 lvim.builtin.breadcrumbs.active = true
 
+
 vim.opt.relativenumber = true
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
 vim.o.guifont = "FiraMono Nerd Font Mono:h16"
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
@@ -89,7 +93,6 @@ lvim.builtin.which_key.mappings["j"] = {
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
 lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
-lvim.builtin.notify.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
@@ -222,29 +225,6 @@ lvim.plugins = {
     "simrat39/rust-tools.nvim",
   },
   {
-    "aserowy/tmux.nvim",
-
-    config = function()
-      require("tmux").setup({
-        -- overwrite default configuration
-        -- here, e.g. to enable default bindings
-        copy_sync = {
-          -- enables copy sync and overwrites all register actions to
-          -- sync registers *, +, unnamed, and 0 till 9 from tmux in advance
-          enable = true,
-        },
-        navigation = {
-          -- enables default keybindings (C-hjkl) for normal mode
-          enable_default_keybindings = true,
-        },
-        resize = {
-          -- disable default keybindings (A-hjkl) for normal mode
-          enable_default_keybindings = false,
-        }
-      })
-    end
-  },
-  {
     "mfussenegger/nvim-jdtls",
   },
   {
@@ -252,9 +232,6 @@ lvim.plugins = {
     config = function()
       require("colorizer").setup()
     end
-  },
-  {
-    'rcarriga/nvim-dap-ui'
   },
   {
     'saecki/crates.nvim',
@@ -302,25 +279,22 @@ lvim.plugins = {
         extra_groups = { -- table/string: additional groups that should be cleared
           -- In particular, when you set it to 'all', that means all available groups
           "all"
-
-          -- example of akinsho/nvim-bufferline.lua
-          -- "BufferLineTabClose",
-          -- "BufferlineBufferSelected",
-          -- "BufferLineFill",
-          -- "BufferLineBackground",
-          -- "BufferLineSeparator",
-          -- "BufferLineIndicatorSelected",
         },
         exclude = {}, -- table: groups you don't want to clear
       })
     end
-
   },
+  {
+    "TimUntersberger/neogit",
+    config = function ()
+      require("neogit").setup()
+    end
+  }
 }
 
 require("user.rust-tools")
 require("user.colorscheme")
-require("user.dap-ui")
+-- require("user.dap-ui")
 require("user.hop")
 require("user.jaq")
 

@@ -13,7 +13,7 @@ local opts = {
 }
 
 local mappings = {
-  L = {
+  S = {
     name = "Rust",
     r = { "<cmd>RustRunnables<Cr>", "Runnables" },
     -- r = { "<cmd>lua _CARGO_RUN()<cr>", "Cargo Run" },
@@ -41,14 +41,5 @@ local mappings = {
 }
 
 which_key.register(mappings, opts)
-
-local notify_filter = vim.notify
-vim.notify = function(msg, ...)
-  if msg:match "message with no corresponding" then
-    return
-  end
-
-  notify_filter(msg, ...)
-end
 
 -- vim.api.nvim_set_keymap("n", "<m-d>", "<cmd>RustOpenExternalDocs<Cr>", { noremap = true, silent = true })
