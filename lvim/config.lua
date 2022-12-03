@@ -10,10 +10,10 @@ an executable
 
 -- general
 lvim.log.level = "warn"
-lvim.builtin.notify.active = false
 lvim.format_on_save = false
 lvim.colorscheme = "tokyonight"
 lvim.builtin.dap.active = true
+lvim.builtin.nvimtree.active = false
 lvim.lsp.diagnostics.virtual_text = true
 lvim.builtin.terminal.active = true
 lvim.builtin.breadcrumbs.active = true
@@ -22,7 +22,7 @@ lvim.builtin.breadcrumbs.active = true
 vim.opt.relativenumber = true
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
-vim.o.guifont = "FiraMono Nerd Font Mono:h16"
+vim.o.guifont = "FiraCode Nerd Font Mono: h16"
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
@@ -64,7 +64,15 @@ lvim.builtin.which_key.mappings["t"] = {
   b = { "<cmd>SymbolsOutline<cr>", "Symbols" },
 }
 
+lvim.builtin.which_key.mappings["H"] = {
+  name = "+Harpoon",
+  t = { "<cmd>lua require('harpoon.ui').toggle_quick_menu()<cr>", "Toggle" },
+  m = { "<cmd>lua require('harpoon.mark').add_file()<cr>", "mark" },
+}
+
 lvim.builtin.which_key.mappings["F"] = { "<cmd>Telescope live_grep<cr>", "Live Grep" }
+
+lvim.builtin.which_key.mappings["e"] = { "<cmd>Neotree toggle<cr>", "Explorer" }
 
 lvim.builtin.which_key.mappings["d"] = {
   name = "Debug",
@@ -111,7 +119,8 @@ lvim.builtin.treesitter.ensure_installed = {
   "rust",
   "java",
   "yaml",
-  "cpp"
+  "cpp",
+  "zig"
 }
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
@@ -121,10 +130,14 @@ lvim.builtin.treesitter.rainbow.enable = true
 -- generic LSP settings
 
 -- -- make sure server will always be installed even if the server is in skipped_servers list
--- lvim.lsp.installer.setup.ensure_installed = {
---     "sumeko_lua",
---     "jsonls",
--- }
+lvim.lsp.installer.setup.ensure_installed = {
+    -- "sumeko_lua",
+    "jsonls",
+    "rust_analyzer",
+    "marksman",
+    "clangd",
+    "pyright",
+}
 -- -- change UI setting of `LspInstallInfo`
 -- -- see <https://github.com/williamboman/nvim-lsp-installer#default-configuration>
 -- lvim.lsp.installer.setup.ui.check_outdated_servers_on_open = false
@@ -141,9 +154,24 @@ lvim.builtin.treesitter.rainbow.enable = true
 -- ---see the full default list `:lua print(vim.inspect(lvim.lsp.automatic_configuration.skipped_servers))`
 -- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
 -- local opts = {} -- check the lspconfig documentation for a list of all possible options
--- require("lvim.lsp.manager").setup("pyright", opts)
+-- require("lvim.lsp.manager").setup("zls", {})
+-- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "jdtls" })
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "rust_analyzer" })
-vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "jdtls" })
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "purescriptls" })
+
+require("lvim.lsp.manager").setup("marksman", {})
+require("lvim.lsp.manager").setup("sqls", {})
+require("lvim.lsp.manager").setup("purescriptls", {
+  settings = {
+    purescript = {
+      addSpagoSources = true -- e.g. any purescript language-server config here
+    }
+  },
+  flags = {
+    debounce_text_changes = 150,
+  }
+})
+
 
 
 -- ---remove a server from the skipped list, e.g. eslint, or emmet_ls. !!Requires `:LvimCacheReset` to take effect!!
@@ -177,11 +205,6 @@ vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "jdtls" })
 --     filetypes = { "typescript", "typescriptreact" },
 --   },
 -- }
-local formatters = require "lvim.lsp.null-ls.formatters"
-formatters.setup {
-  { command = "google_java_format", filetypes = { "java" } },
-}
-
 
 -- -- set additional linters
 -- local linters = require "lvim.lsp.null-ls.linters"
@@ -289,7 +312,35 @@ lvim.plugins = {
     config = function ()
       require("neogit").setup()
     end
-  }
+  },
+  {
+    "ziglang/zig.vim",
+  },
+  {
+    "catppuccin/nvim",
+    as = "catppuccin",
+    config = function ()
+      require("catppuccin").setup {
+        flavour = "frappe"
+      }
+    end
+  },
+  {
+    "ThePrimeagen/harpoon",
+  },
+  {
+    "purescript-contrib/purescript-vim",
+  },
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+		requires = { { "MunifTanjim/nui.nvim", module = "nui" } },
+		setup = function()
+			vim.g.neo_tree_remove_legacy_commands = true
+		end,
+		config = function()
+			require("user.neo-tree")
+		end,
+	},
 }
 
 require("user.rust-tools")
@@ -304,10 +355,10 @@ require("user.jaq")
 --   -- enable wrap mode for json files only
 --   command = "setlocal wrap",
 -- })
--- vim.api.nvim_create_autocmd("FileType", {
---   pattern = "zsh",
---   callback = function()
---     -- let treesitter use bash highlight for zsh files as well
---     require("nvim-treesitter.highlight").attach(0, "bash")
---   end,
--- })
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "zsh",
+  callback = function()
+    -- let treesitter use bash highlight for zsh files as well
+    require("nvim-treesitter.highlight").attach(0, "bash")
+  end,
+})
